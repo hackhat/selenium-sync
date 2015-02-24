@@ -248,7 +248,6 @@ _.extend(Window.prototype, {
                 var hasEJSON = this.__hasEJSON();
                 var clientSideFunction = hasEJSON ? 'runFunctionWithEJSONArgs' : 'runFunctionWithJSONArgs';
                 var stringArgs;
-                console.log('hasEJSON', hasEJSON)
                 if(hasEJSON){
                     var EJSON = require('EJSON');
                     stringArgs = EJSON.stringify(testArgs);
