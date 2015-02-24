@@ -1,7 +1,7 @@
 {
   "name": "selenium-sync",
   "version": "0.0.1",
-  "description": "An intuitive and clean (sync) selenium implementation and non blocking.",
+  "description": "An intuitive, clean and sync js selenium implementation (also non blocking)",
   "main": "src/Browser.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -16,5 +16,10 @@
     "intuitive"
   ],
   "author": "hackhat",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "fibers": "^1.0.5",
+    "lodash": "^3.3.0",
+    "selenium-webdriver": "^2.44.0"
+  }
 }
