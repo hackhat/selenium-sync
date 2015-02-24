@@ -30,6 +30,7 @@ a beautiful and intuitive API.
  - Easy multi window management;
  - Easy css selector out of the box;
  - Very friendly [API](https://rawgit.com/hackhat/selenium-sync/master/docs/jsduck/index.html) docs with types; 
+ - Uses the selenium for JavaScript;
 
 
 ## Fiber sync vs promise sync vs blocking sync
@@ -107,7 +108,8 @@ This is needed to transmit data properly from test to the client browser. If no 
 
 # Selenium docs
 
- - [Selenium docs](http://selenium.googlecode.com/git/docs/api/javascript/class_webdriver_WebDriver.html);
+ - [Selenium docs](http://selenium.googlecode.com/git/docs/api/javascript/index.html);
+ - [Selenium webdriver](http://selenium.googlecode.com/git/docs/api/javascript/class_webdriver_WebDriver.html)
  - [Java docs](http://selenium.googlecode.com/git/docs/api/java/org/openqa/selenium/package-summary.html);
  - [Until](http://selenium.googlecode.com/git/docs/api/javascript/source/lib/webdriver/until.js.src.html);
  - [Python](http://selenium-python.readthedocs.org/api.html#selenium.webdriver.remote.webdriver.WebDriver.current_window_handle);
