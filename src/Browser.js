@@ -7,73 +7,18 @@ var TargetLocator = require('selenium-webdriver').WebDriver.TargetLocator;
 var Navigation    = require('selenium-webdriver').WebDriver.Navigation;
 var WebElement    = require('selenium-webdriver').WebElement;
 var By            = require('selenium-webdriver').By;
+var utils         = require('./utils');
 
 
 
 
 
-var wrapPromise = function(fn, target, multi, isPrototype){
-    return Future.wrap(function(){
-        var args = Array.prototype.slice.call(arguments);
-        var cb   = args.pop();
-        /**
-         * If you don't want to bind on target, such as prototype binding then
-         * set it to true to bind to this. This will be the instance of the target
-         * because is on it's prototype.
-         */
-        fn.apply(isPrototype ? this : target, args).then(function onSuccess(){
-            var args = Array.prototype.slice.call(arguments);
-            args.unshift(void 0);
-            cb.apply({}, args);
-        }, function onError(err){
-            cb(err);
-        })
-    }, !!multi);
-}
-
-
-
-var wrapMethods = function(target, methods, isPrototype){
-    var multi = false;
-    methods.forEach(function(methodName){
-        if(target['f_' + methodName] !== void 0) throw new Error('Target already has this method');
-        if(!_.isFunction(target[methodName])) throw new Error('"' + methodName + '"' + ' Is not a function');
-        target['f_' + methodName] = wrapPromise(target[methodName], target, multi, isPrototype);
-    })
-}
-
-
-
-var sleep = function(ms){
-    var future = new Future;
-    setTimeout(function() {
-        future.return();
-    }, ms);
-    return future;
-}
-
-
-
-/**
- * A helper method that receives a function.
- * The function should return false to keep waiting, any other value
- * will stop the wait.
- * The function provided will be called multiple times until it returns
- * true.
- */
-var wait = function(fn){
-    var i = 0;
-    while(fn(i) === false){
-        i++;
-        sleep(200).wait();
-    }
-};
 
 
 
 
 var isPrototype = true;
-wrapMethods(TargetLocator.prototype, [
+utils.wrapMethods(TargetLocator.prototype, [
     'window'
 ], isPrototype);
 
@@ -81,7 +26,7 @@ wrapMethods(TargetLocator.prototype, [
 
 
 var isPrototype = true;
-wrapMethods(WebElement.prototype, [
+utils.wrapMethods(WebElement.prototype, [
     'getOuterHtml' ,
     'click'        ,
     'sendKeys'     ,
@@ -91,7 +36,7 @@ wrapMethods(WebElement.prototype, [
 
 
 var isPrototype = true;
-wrapMethods(Navigation.prototype, [
+utils.wrapMethods(Navigation.prototype, [
     'back'    ,
     'forward' ,
     'refresh' ,
@@ -181,7 +126,7 @@ var Browser = function(options){
     this.__quitted = false;
 
     // Make it works with fibers.
-    wrapMethods(this.__driver, [
+    utils.wrapMethods(this.__driver, [
         'get'                 ,
         'getTitle'            ,
         'wait'                ,
@@ -201,7 +146,7 @@ var Browser = function(options){
     // block the current one. If not it will not go beyond this step.
     Future.task(function(){
         while(true && !this.__quitted){
-            sleep(100).wait();
+            utils.sleep(100).wait();
             this.update();
         }
     }.bind(this)).detach();
@@ -393,7 +338,7 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
      * Sleeps for x seconds.
      */
     sleep: function(ms){
-        sleep(ms).wait();
+        utils.sleep(ms).wait();
     },
 
 
