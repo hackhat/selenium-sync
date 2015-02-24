@@ -1,5 +1,5 @@
 var _     = require('lodash');
-var utils = require('./utils');
+var utils = require('../utils');
 
 
 

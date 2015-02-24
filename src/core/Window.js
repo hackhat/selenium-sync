@@ -1,7 +1,8 @@
 var _       = require('lodash');
-var utils   = require('./utils');
+var utils   = require('../utils');
 var By      = require('selenium-webdriver').By;
 var Element = require('./Element');
+
 
 
 

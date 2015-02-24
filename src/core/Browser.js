@@ -6,7 +6,7 @@ var until         = require('selenium-webdriver').until;
 var TargetLocator = require('selenium-webdriver').WebDriver.TargetLocator;
 var Navigation    = require('selenium-webdriver').WebDriver.Navigation;
 var WebElement    = require('selenium-webdriver').WebElement;
-var utils         = require('./utils');
+var utils         = require('../utils');
 var Window        = require('./Window');
 
 
