@@ -13,7 +13,7 @@ scriptic names like `getWindowHandles`.
 
 ## API
 
-Check the **[full API here](https://rawgit.com/hackhat/selenium-sync/master/docs/jsduck/index.html)**.
+Check the **[full API here](https://rawgit.com/hackhat/selenium-sync/prod/docs/jsduck/index.html)**.
 
 ## Why this?
 
@@ -29,7 +29,7 @@ a beautiful and intuitive API.
  - Browser/window/element concepts (easy to understand where you are apply a certain change);
  - Easy multi window management;
  - Easy css selector out of the box;
- - Very friendly [API](https://rawgit.com/hackhat/selenium-sync/master/docs/jsduck/index.html) docs with types; 
+ - Very friendly [API](https://rawgit.com/hackhat/selenium-sync/prod/docs/jsduck/index.html) docs with types; 
  - Uses the [selenium for JavaScript](http://selenium.googlecode.com/git/docs/api/javascript/index.html);
 
 
@@ -89,7 +89,7 @@ a beautiful and intuitive API.
     ```
 
 
-    
+
 ## Fiber sync vs promise sync vs blocking sync
 
 There are 3 different ways of using selenium and here are explained:
