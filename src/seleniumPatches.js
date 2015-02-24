@@ -48,6 +48,7 @@ var seleniumPatches = function(){
         'getAllWindowHandles' ,
         'getWindowHandle'     ,
         'executeScript'       ,
+        'executeAsyncScript'  ,
         'findElement'         ,
         'findElements'        ,
     ], isPrototype);

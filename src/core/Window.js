@@ -29,7 +29,62 @@ var Window = function(options){
 
 
 
+/**
+ * Scripts that will be ran on the client side.
+ */
+Window.scripts = {
+
+
+
+    setup: function(){
+        if(typeof window.test === 'undefined'){
+            window.test = {};
+        }
+        if(!window.test.runFunctionWithEJSONArgs){
+            window.test.runFunctionWithEJSONArgs = function(fn, data){
+                console.log(data)
+                fn.call(window, JSON.parse(data));
+            }
+        }
+
+
+        return true;
+    },
+
+
+
+    // loadScript: function(){
+    //     // From: http://sqa.stackexchange.com/questions/2921/webdriver-can-i-inject-a-jquery-script-for-a-page-that-isnt-using-jquery
+    // },
+
+
+
+    // From: http://stackoverflow.com/questions/8917921/cross-browser-javascript-not-jquery-scroll-to-top-animation
+    scrollTo: function(cssSelector){
+        var target = document.querySelector(cssSelector);
+        if(!target) return alert('not found');
+        $(window).scrollTop(target.getBoundingClientRect().top);
+        return true;
+    }
+
+
+
+}
+
+
+
+
+
 _.extend(Window.prototype, {
+
+
+
+    /**
+     * Update, not yet used.
+     */
+    update: function(){
+
+    },
 
 
 
@@ -93,6 +148,15 @@ _.extend(Window.prototype, {
 
 
     /**
+     * Scrolls into an element defined by the cssSelector.
+     */
+    scrollTo: function(cssSelector){
+        this.executeScript(Window.scripts.scrollTo, cssSelector);
+    },
+
+
+
+    /**
      * Finds an element in this window. It will automatically wrap the element
      * returned into a Element of our type.
      */
@@ -133,19 +197,43 @@ _.extend(Window.prototype, {
      */
     executeScript: function(script, testArgs){
         this.focus();
+        this.__injectInitScripts();
         if(_.isFunction(script)){
             if(testArgs){
-                var EJSON = require('EJSON');
+                // var EJSON = require('EJSON');
                 var script = [
                     'return test.runFunctionWithEJSONArgs(',
                         script.toString(), ', ',
-                        '\'', EJSON.stringify(testArgs), '\'',
+                        // The double stringify is needed because we need to pass the
+                        // arguments as string, but that string should be stringified too.
+                        // This enables you to send picky data like `a[href="xxx"]`.
+                        '', JSON.stringify(JSON.stringify(testArgs)), '',
                     ');',
                 ].join('');
-                console.log('>>>>>>>>>>', script)
             }else{
                 script = script.toString();
             }
+            console.log('s', script)
+        }
+        try{
+            var data = this.__driver.f_executeScript(script).wait();
+        }catch(err){
+            return {err: err};
+        }
+        return {data: data};
+    },
+
+
+
+    /**
+     * Executes a raw script without any helpers. Then returns the
+     * data.
+     */
+    executeRawScript: function(script){
+        this.focus();
+        if(_.isFunction(script)){
+            script = script.toString();
+            var script = ['(', script.toString(), ')();'].join('');
         }
         try{
             var data = this.__driver.f_executeScript(script).wait();
@@ -160,12 +248,24 @@ _.extend(Window.prototype, {
     waitToLoad: function(){
         this.focus();
         this.wait(function(){
-            return this.executeScript('return document.readyState').data === "complete";
+            return this.isLoaded();
         }.bind(this))
     },
 
 
 
+    /**
+     * Returns true if the page has been loaded.
+     */
+    isLoaded: function(){
+        return this.executeScript('return document.readyState').data === "complete";
+    },
+
+
+
+    /**
+     *
+     */
     waitForElement: function(cssSelector){
         this.focus();
         this.wait(function(){
@@ -181,6 +281,9 @@ _.extend(Window.prototype, {
 
 
 
+    /**
+     *
+     */
     focus: function(){
         this.__browser.switchToWindow(this);
         return true;
@@ -188,6 +291,9 @@ _.extend(Window.prototype, {
 
 
 
+    /**
+     *
+     */
     refresh: function(){
         this.focus();
         this.__driver.navigate().f_refresh().wait();
@@ -195,6 +301,9 @@ _.extend(Window.prototype, {
 
 
 
+    /**
+     *
+     */
     back: function(){
         this.focus();
         this.__driver.navigate().f_back().wait();
@@ -202,6 +311,9 @@ _.extend(Window.prototype, {
 
 
 
+    /**
+     *
+     */
     forward: function(){
         this.focus();
         this.__driver.navigate().f_forward().wait();
@@ -209,7 +321,23 @@ _.extend(Window.prototype, {
 
 
 
-    wait: utils.wait
+    /**
+     *
+     */
+    wait: utils.wait,
+
+
+
+    /**
+     * Scripts should be injected before each executeAction because
+     * the page might have been reloaded from the last time the scripts
+     * have been injected and might not be available.
+     * There is no problem if is executed more than once on the same page.
+     * @private
+     */
+    __injectInitScripts: function(){
+        this.executeRawScript(Window.scripts.setup)
+    },
 
 
 

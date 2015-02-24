@@ -113,6 +113,11 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
                 throw err;
             }
         }
+
+        // Update each window
+        this.__windows.forEach(function(w){
+            w.update();
+        }.bind(this))
     },
 
 
