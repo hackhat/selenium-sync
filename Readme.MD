@@ -11,6 +11,9 @@ scriptic names like `getWindowHandles`.
     npm install selenium-sync --save-dev
 
 
+## API
+
+Check the [full API here](http://cdn.rawgit.com/hackhat/selenium-sync/master/docs/jsduck/index.html).
 
 ## Why this?
 
