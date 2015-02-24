@@ -44,9 +44,11 @@ There are 3 different ways of using selenium and here are explained:
 
 ## Sugar code
 
-1. First install deps: `npm install --save-dev selenium-sync fibers`;
+ - First install deps: `npm install --save-dev selenium-sync fibers`;
 
-2. Then create a file `test.js` with those contents:
+ - Then create a file `test.js` with those contents:
+
+
 
     var Future  = require('fibers/future');
     var Browser = require('../../src/index').Browser;
@@ -80,9 +82,11 @@ There are 3 different ways of using selenium and here are explained:
         browser.sleep(200000);
     }).detach();
 
-3. Then run it with `node test.js`;
 
-4. Watch it do the work for you;
+
+ - Then run it with `node test.js`;
+
+ - Watch it do the work for you;
 
 
 
