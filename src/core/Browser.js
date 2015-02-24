@@ -2,6 +2,7 @@ var _               = require('lodash');
 var Future          = require('fibers/future');
 var ChromeDriver    = require('selenium-webdriver/chrome').Driver;
 var EventEmitter    = require('events').EventEmitter;
+var webdriver       = require('selenium-webdriver');
 var until           = require('selenium-webdriver').until;
 var utils           = require('../utils');
 var seleniumPatches = require('../seleniumPatches');
@@ -30,19 +31,6 @@ var Browser = function(options){
     }
     this.__windows = [];
     this.__quitted = false;
-
-    // Make it works with fibers.
-    utils.wrapMethods(this.__driver, [
-        'get'                 ,
-        'getTitle'            ,
-        'wait'                ,
-        'quit'                ,
-        'getAllWindowHandles' ,
-        'getWindowHandle'     ,
-        'executeScript'       ,
-        'findElement'         ,
-        'findElements'        ,
-    ])
 
     // First update should be run in the current fiber "thread" in order
     // to setup the first window before any other call.
@@ -187,6 +175,19 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
 
 
+    getWindowByUrl: function(url){
+        this.update();
+        var i = this.__windows.length;
+        while(i--){
+            if(this.__windows[i].getUrl() === url){
+                return this.__windows[i];
+            }
+        }
+        return false;
+    },
+
+
+
     switchToWindow: function(w){
         return this.__driver.switchTo().f_window(w.getId()).wait();
     },
@@ -202,6 +203,22 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
     getAllWindowIds: function(){
         return this.__driver.f_getAllWindowHandles().wait();
+    },
+
+
+
+    /**
+     * Might not work correctly if opens a page that will redirect to another
+     * url.
+     */
+    openANewWindow: function(url){
+        // Method from: http://stackoverflow.com/questions/17547473/how-to-open-a-new-tab-using-selenium-webdriver
+        var w = this.getCurrentWindow();
+        var windowName = 'openedWindow_' + this.__openedWindowsId;
+        this.__openedWindowsId++;
+        w.executeScript("window.open('"+url+"','_blank');");
+        this.waitForWindowWithUrlToOpen(url);
+        return this.getWindowByUrl(url);
     },
 
 
@@ -231,6 +248,15 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
     waitForWindowWithTitleToOpen: function(title){
         this.wait(function(){
             return !!this.getWindowByTitle(title);
+        }.bind(this))
+    },
+
+
+
+
+    waitForWindowWithUrlToOpen: function(url){
+        this.wait(function(){
+            return !!this.getWindowByUrl(url);
         }.bind(this))
     },
 

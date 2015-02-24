@@ -2,6 +2,7 @@ var utils         = require('./utils');
 var TargetLocator = require('selenium-webdriver').WebDriver.TargetLocator;
 var Navigation    = require('selenium-webdriver').WebDriver.Navigation;
 var WebElement    = require('selenium-webdriver').WebElement;
+var ChromeDriver  = require('selenium-webdriver/chrome').Driver;
 
 
 
@@ -33,6 +34,22 @@ var seleniumPatches = function(){
         'forward' ,
         'refresh' ,
         'to'      ,
+    ], isPrototype);
+
+
+
+    var isPrototype = true;
+    utils.wrapMethods(ChromeDriver.prototype, [
+        'get'                 ,
+        'getTitle'            ,
+        'getCurrentUrl'       ,
+        'wait'                ,
+        'quit'                ,
+        'getAllWindowHandles' ,
+        'getWindowHandle'     ,
+        'executeScript'       ,
+        'findElement'         ,
+        'findElements'        ,
     ], isPrototype);
 
 

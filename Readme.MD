@@ -44,14 +44,19 @@ There are 3 different ways of using selenium and here are explained:
 
 ## Sugar code
 
-    var browser = new Browser({
-        driver: new ChromeDriver(),
-    })
+1. First install deps: `npm install --save-dev selenium-sync fibers`;
+
+2. Then create a file `test.js` with those contents:
+
+    var Browser = require('selenium-sync').Browser;
+    var browser = new Browser();
     var currentWindow = browser.getCurrentWindow();
     currentWindow.goTo('http://google.com');
     currentWindow.refresh();
     var searchBoxEl = currentWindow.findEl('#search-box');
     searchBoxEl.sendKeys('test');
+
+3. Then run it with `node test.js`;
 
 
 
@@ -59,6 +64,15 @@ There are 3 different ways of using selenium and here are explained:
 
  - WindowId: this is provided by the webdriver;
  - The browser updates every x ms to reflect the reality;
+
+
+
+# Selenium docs
+
+ - [Selenium docs](http://selenium.googlecode.com/git/docs/api/javascript/class_webdriver_WebDriver.html);
+ - [Java docs](http://selenium.googlecode.com/git/docs/api/java/org/openqa/selenium/package-summary.html);
+ - [Until](http://selenium.googlecode.com/git/docs/api/javascript/source/lib/webdriver/until.js.src.html);
+ - [Python](http://selenium-python.readthedocs.org/api.html#selenium.webdriver.remote.webdriver.WebDriver.current_window_handle);
 
 
 

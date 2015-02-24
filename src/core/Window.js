@@ -71,6 +71,15 @@ _.extend(Window.prototype, {
 
 
 
+    getUrl: function(){
+        this.focus();
+        return this.__driver.f_getCurrentUrl().wait();
+    },
+
+
+
+
+
     /**
      * Returns false if not clicked.
      */
