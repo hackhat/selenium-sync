@@ -7,6 +7,7 @@ var Future = require('fibers/future');
 /**
  * @class utils
  * @type {Object}
+ * @private
  */
 var utils = {};
 

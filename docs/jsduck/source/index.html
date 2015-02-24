@@ -15,11 +15,33 @@
   </script>
 </head>
 <body onload="prettyPrint(); highlight();">
-  <pre class="prettyprint lang-js">module.exports = {
+  <pre class="prettyprint lang-js"><span id='index'>/**
+</span> * @class index
+ * @type {Object}
+ * This is what the main module returns when you do
+ *
+ *     var seleniumSync = require('selenium-sync');
+ */
+module.exports = {
+<span id='index-property-Browser'>    /**
+</span>     * @type {core.Browser}
+     */
     Browser           : require('./core/Browser'),
+<span id='index-property-Window'>    /**
+</span>     * @type {core.Window}
+     */
     Window            : require('./core/Window'),
+<span id='index-property-Element'>    /**
+</span>     * @type {core.Element}
+     */
     Element           : require('./core/Element'),
+<span id='index-property-utils'>    /**
+</span>     * @type {utils}
+     */
     utils             : require('./utils'),
+<span id='index-property-seleniumWebdriver'>    /**
+</span>     * @type {selenium-webdriver}
+     */
     seleniumWebdriver : require('selenium-webdriver'),
 }
 </pre>

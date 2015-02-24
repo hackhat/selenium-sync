@@ -15,6 +15,9 @@ var Window          = require('./Window');
 var seleniumPatchesApplied = false;
 /**
  * @class core.Browser
+ * @param {Object}   options
+ * @param {'chrome'} options.driverType
+ * @param {*}        options.driver
  */
 var Browser = function(options){
     if(!seleniumPatchesApplied){
@@ -126,7 +129,8 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
 
     /**
-     * Always fresh data.
+     * Returns the current window selected.
+     * @return {core.Window}
      */
     getCurrentWindow: function(){
         // In order to return the correct window, we need to update.
@@ -136,6 +140,11 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
 
 
+    /**
+     * Returns the window with the id requested.
+     * @param {String} id
+     * @return {core.Window|undefined}
+     */
     getWindowById: function(id){
         var i = this.__windows.length;
         while(i--){
@@ -148,6 +157,13 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
 
 
+    /**
+     * Returns a window with the index requested. The index
+     * is an internal index which starts at 0 and every time
+     * a new window is added it increases.
+     * @param  {Number} index
+     * @return {core.Window|undefined}
+     */
     getWindowByIndex: function(index){
         return this.__windows[index];
     },
@@ -158,6 +174,8 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
      * If the window is not yet completely loaded you might not
      * have a valid window title. You should wait for the window
      * to load before using this.
+     * @param  {String} title
+     * @return {core.Window}
      */
     switchToWindowByTitle: function(title){
         var w = this.getWindowByTitle(title);
@@ -170,6 +188,11 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
 
 
+    /**
+     * Returns a window with the title specified.
+     * @param  {String} title
+     * @return {core.Window|undefined}
+     */
     getWindowByTitle: function(title){
         this.update();
         var i = this.__windows.length;
@@ -183,6 +206,11 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
 
 
+    /**
+     * Returns a window with the url specified.
+     * @param  {String} url
+     * @return {core.Window|undefined}
+     */
     getWindowByUrl: function(url){
         this.update();
         var i = this.__windows.length;
@@ -196,19 +224,31 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
 
 
+    /**
+     * Switches to the window provided.
+     * @param  {core.Window} w
+     */
     switchToWindow: function(w){
         return this.__driver.switchTo().f_window(w.getId()).wait();
     },
 
 
 
+    /**
+     * Returns all the windows.
+     * @return {[core.Window]}
+     */
     getWindows: function(){
         this.update();
-        return this.__windows;
+        return this.__windows-slice();
     },
 
 
 
+    /**
+     * Returns all the windows ids as provided by selenium webdriver.
+     * @return {[String]}
+     */
     getAllWindowIds: function(){
         return this.__driver.f_getAllWindowHandles().wait();
     },
@@ -218,9 +258,14 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
     /**
      * Might not work correctly if opens a page that will redirect to another
      * url.
+     * @param  {String} url [description]
+     * @return {core.Window}
      */
     openANewWindow: function(url){
         // Method from: http://stackoverflow.com/questions/17547473/how-to-open-a-new-tab-using-selenium-webdriver
+        if(this.getWindowByUrl(url)){
+            throw new Error('This function would not work because uses a hack, which in your case will not work.')
+        }
         var w = this.getCurrentWindow();
         var windowName = 'openedWindow_' + this.__openedWindowsId;
         this.__openedWindowsId++;
@@ -245,7 +290,7 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
     /**
      * Waits until the window you provided is closed.
-     * @param  {Window} w [description]
+     * @param {Window} w [description]
      */
     waitWindowToBeClosed: function(w){
         this.wait(function(){
@@ -257,7 +302,7 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
     /**
      * Waits until a window with the title specified opens.
-     * @param  {String} title
+     * @param {String} title
      */
     waitForWindowWithTitleToOpen: function(title){
         this.wait(function(){
@@ -269,7 +314,7 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
     /**
      * Waits until a window with the url specified opens.
-     * @param  {String} url
+     * @param {String} url
      */
     waitForWindowWithUrlToOpen: function(url){
         this.wait(function(){
@@ -288,7 +333,8 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
 
     /**
-     * Sleeps for x seconds.
+     * Sleeps for x mili seconds.
+     * @param {Number} ms
      */
     sleep: function(ms){
         utils.sleep(ms).wait();
@@ -307,7 +353,9 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
 
     /**
+     * Sets the current window.
      * Internal method, don't use externally.
+     * @param {core.Window} w
      * @private
      */
     __setCurrentWindow: function(w){
@@ -318,7 +366,9 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
 
     /**
+     * Adds a new window to the browser.
      * Internal method, don't use externally.
+     * @param {core.Window} w
      * @private
      */
     __addWindow: function(w){
@@ -329,6 +379,8 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
 
     /**
+     * Closes a window.
+     * @param {core.Window} w
      * @private
      */
     __closeWindow: function(w){

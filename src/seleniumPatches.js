@@ -7,7 +7,12 @@ var ChromeDriver  = require('selenium-webdriver/chrome').Driver;
 
 
 
-
+/**
+ * @class seleniumPatches
+ * Is a function which patches the selenium in a way to enable
+ * it to be sync. Don't call this function.
+ * @private
+ */
 var seleniumPatches = function(){
 
 

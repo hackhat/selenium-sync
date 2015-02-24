@@ -13,18 +13,22 @@ var Element = require('./Element');
  * Almost every method makes use of ´this.__browser.switchToWindow(this);`
  * because we need to ensure that the commands are sent to the correct
  * window and not some other window the driver has selected.
+ *
+ * @param {Object}       options
+ * @param {String}       options.id The id provided by selenium webdriver.
+ * @param {*}            options.driver The selenium webdriver.
+ * @param {core.Browser} options.browser
  */
 var Window = function(options){
     options = _.extend({
         id      : void 0,
         driver  : void 0,
         browser : void 0,
-        closed  : false,
     }, options);
     this.__id      = options.id;
     this.__driver  = options.driver;
     this.__browser = options.browser;
-    this.__closed  = options.closed;
+    this.__closed  = false;
 }
 
 
@@ -33,11 +37,18 @@ var Window = function(options){
 
 /**
  * Scripts that will be ran on the client side.
+ * @property scripts
+ * @static
  */
 Window.scripts = {
 
 
 
+    /**
+     * Setups the window
+     * @method scripts.setup
+     * @static
+     */
     setup: function(){
         if(typeof window.test === 'undefined'){
             window.test = {};
@@ -60,6 +71,11 @@ Window.scripts = {
 
 
 
+    /**
+     * Scrolls to a certain element.
+     * @method scripts.scrollTo
+     * @param {String} cssSelector
+     */
     scrollTo: function(cssSelector){
         var target = document.querySelector(cssSelector);
         if(!target) return alert('not found');
