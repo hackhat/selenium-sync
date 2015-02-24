@@ -29,7 +29,7 @@ a beautiful and intuitive API.
  - Browser/window/element concepts (easy to understand where you are apply a certain change);
  - Easy multi window management;
  - Easy css selector out of the box;
- - Very friendly **[API](https://rawgit.com/hackhat/selenium-sync/master/docs/jsduck/index.html) docs with types; 
+ - Very friendly [API](https://rawgit.com/hackhat/selenium-sync/master/docs/jsduck/index.html) docs with types; 
 
 
 ## Fiber sync vs promise sync vs blocking sync
