@@ -6,6 +6,9 @@ var SeleniumKeys = require('selenium-webdriver').Key;
 
 
 
+/**
+ * Element
+ */
 var Element = function(options){
     options = _.extend({
         rawEl   : void 0,

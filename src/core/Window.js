@@ -40,9 +40,8 @@ Window.scripts = {
         if(typeof window.test === 'undefined'){
             window.test = {};
         }
-        if(!window.test.runFunctionWithEJSONArgs){
-            window.test.runFunctionWithEJSONArgs = function(fn, data){
-                console.log(data)
+        if(!window.test.runFunctionWithJSONArgs){
+            window.test.runFunctionWithJSONArgs = function(fn, data){
                 fn.call(window, JSON.parse(data));
             }
         }
@@ -59,7 +58,6 @@ Window.scripts = {
 
 
 
-    // From: http://stackoverflow.com/questions/8917921/cross-browser-javascript-not-jquery-scroll-to-top-animation
     scrollTo: function(cssSelector){
         var target = document.querySelector(cssSelector);
         if(!target) return alert('not found');
@@ -200,27 +198,30 @@ _.extend(Window.prototype, {
         this.__injectInitScripts();
         if(_.isFunction(script)){
             if(testArgs){
-                // var EJSON = require('EJSON');
+                var hasEJSON = this.__hasEJSON();
+                var clientSideFunction = hasEJSON ? 'runFunctionWithEJSONArgs' : 'runFunctionWithJSONArgs';
+                var stringArgs;
+                console.log('hasEJSON', hasEJSON)
+                if(hasEJSON){
+                    var EJSON = require('EJSON');
+                    stringArgs = EJSON.stringify(testArgs);
+                }else{
+                    stringArgs = JSON.stringify(JSON.stringify(testArgs));
+                }
                 var script = [
-                    'return test.runFunctionWithEJSONArgs(',
+                    'return test.'+clientSideFunction+'(',
                         script.toString(), ', ',
                         // The double stringify is needed because we need to pass the
                         // arguments as string, but that string should be stringified too.
                         // This enables you to send picky data like `a[href="xxx"]`.
-                        '', JSON.stringify(JSON.stringify(testArgs)), '',
+                        '', stringArgs, '',
                     ');',
                 ].join('');
             }else{
                 script = script.toString();
             }
-            console.log('s', script)
         }
-        try{
-            var data = this.__driver.f_executeScript(script).wait();
-        }catch(err){
-            return {err: err};
-        }
-        return {data: data};
+        return this.executeRawScript(script);
     },
 
 
@@ -228,6 +229,17 @@ _.extend(Window.prototype, {
     /**
      * Executes a raw script without any helpers. Then returns the
      * data.
+     *
+     * Important to note that the return value is not the data, is an object
+     * which contains the data and an eventual error.
+     *
+     * Example of an output of this function:
+     *
+     *     {err: 'some error happened'}
+     *
+     * or
+     *
+     *     {data: 5}
      */
     executeRawScript: function(script){
         this.focus();
@@ -338,6 +350,12 @@ _.extend(Window.prototype, {
     __injectInitScripts: function(){
         this.executeRawScript(Window.scripts.setup)
     },
+
+
+
+    __hasEJSON: function(){
+        return this.executeRawScript('return !!test.EJSON;').data;
+    }
 
 
 

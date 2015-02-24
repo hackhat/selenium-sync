@@ -66,6 +66,14 @@ There are 3 different ways of using selenium and here are explained:
  - The browser updates every x ms to reflect the reality;
 
 
+### EJSON
+
+In order to make EJSON work you need to require it and provide it on the client side
+on the test global variable like this:
+
+    window.test = {EJSON: require('EJSON')};
+
+This is needed to transmit data properly from test to the client browser. If no EJSON is provided it will fall back on JSON.
 
 # Selenium docs
 

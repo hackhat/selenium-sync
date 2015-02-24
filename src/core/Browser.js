@@ -13,6 +13,9 @@ var Window          = require('./Window');
 
 
 var seleniumPatchesApplied = false;
+/**
+ * Browser
+ */
 var Browser = function(options){
     if(!seleniumPatchesApplied){
         seleniumPatches();
