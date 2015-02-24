@@ -6,6 +6,12 @@ scriptic names like `getWindowHandles`.
 
 
 
+## Install
+
+    npm install selenium-sync --save-dev
+
+
+
 ## Why this?
 
 While is not yet complete, is more intuitive than every other selenium
@@ -14,7 +20,7 @@ a beautiful and intuitive API.
 
 
 
-## Features:
+## Features
 
  - Sync and non blocking using fibers;
  - Browser/window/element concepts;
@@ -23,20 +29,15 @@ a beautiful and intuitive API.
 
 
 
-## Fiber sync vs promise sync vs blocking sync:
+## Fiber sync vs promise sync vs blocking sync
 
-The promise sync (the official way to use selenium) is actually fake, it just queue up a
-lot of instructions to be ran. The downside is that you need to use callback if your next
-step requires data from a previous step.
-The blocking sync is actually not that bad, but is blocking your node.js thread, therefore
-one of the first limitation is that you cannot run your server on the same thread. Is also using
-a wrapper over the Java selenium implementation instead of the JavaScript code provided by selenium.
-Fiber sync (this lib) allows you to run non-blocking code while having a real sync environment.
-Best of both worlds. Uses the JavaScript implementation provided by selenium.
+[**Promise sync**](https://code.google.com/p/selenium/wiki/WebDriverJs) (the official way to use selenium) is actually fake, it just queue up a lot of instructions to be ran. The downside is that you need to use callback if your next step requires data from a previous step. 
+[**Blocking sync**](https://github.com/jsdevel/webdriver-sync) is actually not that bad, but is blocking your node.js thread, therefore one of the first limitation is that you cannot run your server on the same thread. Is also using a wrapper over the Java selenium implementation instead of the JavaScript code provided by selenium.
+**Fiber sync** (this lib) allows you to run non-blocking code while having a real sync environment. Best of both worlds. Uses the JavaScript implementation provided by selenium and [fibers](https://github.com/laverdet/node-fibers) to make it sync.
 
 
 
-## Sugar code:
+## Sugar code
 
     var browser = new Browser({
         driver: new ChromeDriver(),
@@ -49,14 +50,13 @@ Best of both worlds. Uses the JavaScript implementation provided by selenium.
 
 
 
-## More:
+## More you should know
 
  - WindowId: this is provided by the webdriver;
  - The browser updates every x ms to reflect the reality;
 
 
 
-### The bad part:
+### The bad part
 
- - You need fibers;
  - Is not yet complete;
