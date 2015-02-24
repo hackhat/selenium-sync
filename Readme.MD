@@ -33,6 +33,63 @@ a beautiful and intuitive API.
  - Uses the [selenium for JavaScript](http://selenium.googlecode.com/git/docs/api/javascript/index.html);
 
 
+### Code features
+
+ - Send special keys easily:
+
+    ```javascript
+    el.type('selenium-sync', 'ENTER');
+    ```
+
+ - Open a new window:
+
+    ```javascript
+    browser.openANewWindow('http://hackhat.com');
+    ```
+
+ - Find an element on a window:
+
+    ```javascript
+    var el = someWindow.findEl('#search > input:first-child');
+    ```
+
+ - Advanced execute scripts:
+
+    ```javascript
+    window.executeScript(function(data){
+        alert(data.test);
+    }, {
+        test: 5
+    });
+    // Will alert the value 5 in the browser
+    ```
+
+ - Get current window:
+
+    ```javascript
+    var w = browser.getCurrentWindow();
+    ```
+
+ - Switch to window by title:
+
+    ```javascript
+    browser.switchToWindowByTitle('Facebook');
+    ```
+
+ - Wait until a window is closed:
+
+    ```javascript
+    var previousWindow = browser.openANewWindow('some url');
+    // The previous window will open the Facebook login popup
+    // which can be easily grabbed like this:
+    var facebookWindow = browser.getWindowByTitle('Facebook');
+    // Now do your login and
+    browser.waitWindowToBeClosed(facebookWindow);
+    // Now you know that the Facebook popup window has been closed.
+    ```
+
+
+    
 ## Fiber sync vs promise sync vs blocking sync
 
 There are 3 different ways of using selenium and here are explained:
