@@ -31,11 +31,11 @@ a beautiful and intuitive API.
 
 ## Fiber sync vs promise sync vs blocking sync
 
-[**Promise sync**](https://code.google.com/p/selenium/wiki/WebDriverJs) (the official way to use selenium) is actually fake, it just queue up a lot of instructions to be ran. The downside is that you need to use callback if your next step requires data from a previous step. 
+There are 3 different ways of using selenium and here are explained:
 
-[**Blocking sync**](https://github.com/jsdevel/webdriver-sync) is actually not that bad, but is blocking your node.js thread, therefore one of the first limitation is that you cannot run your server on the same thread. Is also using a wrapper over the Java selenium implementation instead of the JavaScript code provided by selenium.
-
-[**Fiber sync**](https://github.com/hackhat/selenium-sync) (this library) allows you to run non-blocking code while having a real sync environment. Best of both worlds. Uses the JavaScript implementation provided by selenium and [fibers](https://github.com/laverdet/node-fibers) to make it sync.
+ - [**Promise sync**](https://code.google.com/p/selenium/wiki/WebDriverJs) (the official way to use selenium) is actually fake, it just queue up a lot of instructions to be ran. The downside is that you need to use callback if your next step requires data from a previous step. 
+ - [**Blocking sync**](https://github.com/jsdevel/webdriver-sync) is actually not that bad, but is blocking your node.js thread, therefore one of the first limitation is that you cannot run your server on the same thread. Is also using a wrapper over the Java selenium implementation instead of the JavaScript code provided by selenium.
+ - [**Fiber sync**](https://github.com/hackhat/selenium-sync) (this library) allows you to run non-blocking code while having a real sync environment. Best of both worlds. Uses the JavaScript implementation provided by selenium and [fibers](https://github.com/laverdet/node-fibers) to make it sync.
 
 
 
