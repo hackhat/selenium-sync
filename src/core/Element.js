@@ -23,6 +23,13 @@ var Element = function(options){
 _.extend(Element.prototype, {
 
 
+
+    type: function(keys){
+        this.sendKeys.apply(this, arguments);
+    }
+
+
+
 });
 // Create sync aliases automatically for the methods requested.
 // Will be added o the Element.prototype;
