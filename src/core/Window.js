@@ -8,6 +8,8 @@ var Element = require('./Element');
 
 
 /**
+ * @class core.Window
+ *
  * Almost every method makes use of ´this.__browser.switchToWindow(this);`
  * because we need to ensure that the commands are sent to the correct
  * window and not some other window the driver has selected.
@@ -78,7 +80,7 @@ _.extend(Window.prototype, {
 
 
     /**
-     * Update, not yet used.
+     * Update, not yet used. Called automatically by the browser.
      */
     update: function(){
 
@@ -86,18 +88,31 @@ _.extend(Window.prototype, {
 
 
 
+    /**
+     * Returns the id of the window. This is the id provided by the
+     * selenium webdriver.
+     * @return {String} Id of this window.
+     */
     getId: function(){
         return this.__id;
     },
 
 
 
+    /**
+     * Defines that this window is now closed.
+     * Should not be called.
+     */
     setClosed: function(value){
         this.__closed = value;
     },
 
 
 
+    /**
+     * Queries whenever this window is closed or not.
+     * @return {Boolean} True if the window is closed. False if is still open.
+     */
     isClosed: function(){
         return this.__closed;
     },
@@ -106,6 +121,7 @@ _.extend(Window.prototype, {
 
     /**
      * Goes to a certain url. When ends the page should be loaded already.
+     * @param {String} url
      */
     goTo: function(url){
         this.focus();
@@ -115,7 +131,8 @@ _.extend(Window.prototype, {
 
 
     /**
-     * Will switch to this window and go back to the driver's window.
+     * Returns the title of the window.
+     * @return {String} Title of the window.
      */
     getTitle: function(){
         this.focus();
@@ -124,6 +141,10 @@ _.extend(Window.prototype, {
 
 
 
+    /**
+     * Returns the url of the window.
+     * @return {String} Url of the window.
+     */
     getUrl: function(){
         this.focus();
         return this.__driver.f_getCurrentUrl().wait();
@@ -134,7 +155,9 @@ _.extend(Window.prototype, {
 
 
     /**
-     * Returns false if not clicked.
+     * Returns false if the element have not been clicked.
+     * @param {String} cssSelector
+     * @return {Boolean}
      */
     click: function(cssSelector){
         this.focus();
@@ -147,6 +170,7 @@ _.extend(Window.prototype, {
 
     /**
      * Scrolls into an element defined by the cssSelector.
+     * @param {String} cssSelector
      */
     scrollTo: function(cssSelector){
         this.executeScript(Window.scripts.scrollTo, cssSelector);
@@ -157,6 +181,7 @@ _.extend(Window.prototype, {
     /**
      * Finds an element in this window. It will automatically wrap the element
      * returned into a Element of our type.
+     * @param {String} cssSelector
      */
     findEl: function(cssSelector){
         this.focus();
@@ -192,6 +217,12 @@ _.extend(Window.prototype, {
      * The main benefit is that you are actually sending a function and not a string
      * which allows you to have syntax highlight in the function you are sending to the
      * client side. Is also more readable than the selenium way.
+     *
+     * @param {String|Function} script
+     * @param {*} testArgs
+     * @return {Object} return
+     * @return {*} return.data
+     * @return {String|undefined} return.err
      */
     executeScript: function(script, testArgs){
         this.focus();
@@ -257,6 +288,9 @@ _.extend(Window.prototype, {
 
 
 
+    /**
+     * Waits until this window has loaded.
+     */
     waitToLoad: function(){
         this.focus();
         this.wait(function(){
@@ -268,6 +302,7 @@ _.extend(Window.prototype, {
 
     /**
      * Returns true if the page has been loaded.
+     * @return {Boolean} Page is loaded.
      */
     isLoaded: function(){
         return this.executeScript('return document.readyState').data === "complete";
@@ -276,7 +311,8 @@ _.extend(Window.prototype, {
 
 
     /**
-     *
+     * Waits until at least one element is found.
+     * @param {String} cssSelector
      */
     waitForElement: function(cssSelector){
         this.focus();
@@ -294,7 +330,7 @@ _.extend(Window.prototype, {
 
 
     /**
-     *
+     * Focus on this window.
      */
     focus: function(){
         this.__browser.switchToWindow(this);
@@ -304,7 +340,7 @@ _.extend(Window.prototype, {
 
 
     /**
-     *
+     * Refreshes this window.
      */
     refresh: function(){
         this.focus();
@@ -314,7 +350,7 @@ _.extend(Window.prototype, {
 
 
     /**
-     *
+     * Navigates back once.
      */
     back: function(){
         this.focus();
@@ -324,7 +360,7 @@ _.extend(Window.prototype, {
 
 
     /**
-     *
+     * Navigates forward.
      */
     forward: function(){
         this.focus();
@@ -334,7 +370,8 @@ _.extend(Window.prototype, {
 
 
     /**
-     *
+     * Check the {@link utils#wait} docs.
+     * @method
      */
     wait: utils.wait,
 

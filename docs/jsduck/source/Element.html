@@ -15,13 +15,17 @@
   </script>
 </head>
 <body onload="prettyPrint(); highlight();">
-  <pre class="prettyprint lang-js">var _     = require('lodash');
-var utils = require('../utils');
+  <pre class="prettyprint lang-js">var _            = require('lodash');
+var utils        = require('../utils');
+var SeleniumKeys = require('selenium-webdriver').Key;
 
 
 
 
 
+<span id='core-Element'>/**
+</span> * @class core.Element
+ */
 var Element = function(options){
     options = _.extend({
         rawEl   : void 0,
@@ -36,8 +40,33 @@ var Element = function(options){
 
 
 
+Element.Keys = SeleniumKeys;
+
+
+
+
 
 _.extend(Element.prototype, {
+
+
+
+<span id='core-Element-method-type'>    /**
+</span>     * Send keys to the element. If you want to send special keys like enter you should do like this
+     *
+     *     el.type('my keyword', 'ENTER');
+     */
+    type: function(keys){
+        var args = Array.prototype.slice.call(arguments);
+        args.forEach(function(stringKeyArg, i){
+            _.forEach(Element.Keys, function(seleniumKey, stringKey){
+                if(stringKeyArg === stringKey){
+                    args[i] = seleniumKey;
+                }
+            })
+        })
+        this.sendKeys.apply(this, args);
+    },
+
 
 
 });

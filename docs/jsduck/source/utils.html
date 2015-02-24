@@ -21,7 +21,10 @@ var Future = require('fibers/future');
 
 
 
-
+<span id='utils'>/**
+</span> * @class utils
+ * @type {Object}
+ */
 var utils = {};
 
 
@@ -30,7 +33,7 @@ utils.wrapPromise = function(fn, target, multi, isPrototype){
     return Future.wrap(function(){
         var args = Array.prototype.slice.call(arguments);
         var cb   = args.pop();
-<span id='global-property-'>        /**
+<span id='utils-property-'>        /**
 </span>         * If you don't want to bind on target, such as prototype binding then
          * set it to true to bind to this. This will be the instance of the target
          * because is on it's prototype.
@@ -68,8 +71,9 @@ utils.sleep = function(ms){
 
 
 
-<span id='global-property-'>/**
-</span> * A helper method that receives a function.
+<span id='utils-method-wait'>/**
+</span> * @method wait
+ * A helper method that receives a function.
  * The function should return false to keep waiting, any other value
  * will stop the wait.
  * The function provided will be called multiple times until it returns

@@ -14,7 +14,7 @@ var Window          = require('./Window');
 
 var seleniumPatchesApplied = false;
 /**
- * Browser
+ * @class core.Browser
  */
 var Browser = function(options){
     if(!seleniumPatchesApplied){
@@ -243,7 +243,10 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
 
 
-
+    /**
+     * Waits until the window you provided is closed.
+     * @param  {Window} w [description]
+     */
     waitWindowToBeClosed: function(w){
         this.wait(function(){
             return w.isClosed();
@@ -252,7 +255,10 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
 
 
-
+    /**
+     * Waits until a window with the title specified opens.
+     * @param  {String} title
+     */
     waitForWindowWithTitleToOpen: function(title){
         this.wait(function(){
             return !!this.getWindowByTitle(title);
@@ -261,7 +267,10 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
 
 
-
+    /**
+     * Waits until a window with the url specified opens.
+     * @param  {String} url
+     */
     waitForWindowWithUrlToOpen: function(url){
         this.wait(function(){
             return !!this.getWindowByUrl(url);
@@ -270,6 +279,10 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
 
 
+    /**
+     * Check the {@link utils#wait} docs.
+     * @method
+     */
     wait: utils.wait,
 
 
@@ -295,6 +308,7 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
     /**
      * Internal method, don't use externally.
+     * @private
      */
     __setCurrentWindow: function(w){
         if(this.__currentWindow === w) return;
@@ -305,6 +319,7 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
     /**
      * Internal method, don't use externally.
+     * @private
      */
     __addWindow: function(w){
         this.__windows.push(w);
@@ -313,6 +328,9 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
 
 
+    /**
+     * @private
+     */
     __closeWindow: function(w){
         this.__windows = _.without(this.__windows, w);
         w.setClosed(true);

@@ -4,7 +4,10 @@ var Future = require('fibers/future');
 
 
 
-
+/**
+ * @class utils
+ * @type {Object}
+ */
 var utils = {};
 
 
@@ -52,6 +55,7 @@ utils.sleep = function(ms){
 
 
 /**
+ * @method wait
  * A helper method that receives a function.
  * The function should return false to keep waiting, any other value
  * will stop the wait.

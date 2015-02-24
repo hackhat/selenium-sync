@@ -19,6 +19,7 @@
 var Future          = require('fibers/future');
 var ChromeDriver    = require('selenium-webdriver/chrome').Driver;
 var EventEmitter    = require('events').EventEmitter;
+var webdriver       = require('selenium-webdriver');
 var until           = require('selenium-webdriver').until;
 var utils           = require('../utils');
 var seleniumPatches = require('../seleniumPatches');
@@ -29,6 +30,9 @@ var Window          = require('./Window');
 
 
 var seleniumPatchesApplied = false;
+<span id='core-Browser'>/**
+</span> * @class core.Browser
+ */
 var Browser = function(options){
     if(!seleniumPatchesApplied){
         seleniumPatches();
@@ -47,19 +51,6 @@ var Browser = function(options){
     }
     this.__windows = [];
     this.__quitted = false;
-
-    // Make it works with fibers.
-    utils.wrapMethods(this.__driver, [
-        'get'                 ,
-        'getTitle'            ,
-        'wait'                ,
-        'quit'                ,
-        'getAllWindowHandles' ,
-        'getWindowHandle'     ,
-        'executeScript'       ,
-        'findElement'         ,
-        'findElements'        ,
-    ])
 
     // First update should be run in the current fiber &quot;thread&quot; in order
     // to setup the first window before any other call.
@@ -83,7 +74,7 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
 
 
-<span id='global-method-update'>    /**
+<span id='core-Browser-method-update'>    /**
 </span>     * Runs at a certain interval to update this instance
      * with data from the real browser.
      */
@@ -142,11 +133,16 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
                 throw err;
             }
         }
+
+        // Update each window
+        this.__windows.forEach(function(w){
+            w.update();
+        }.bind(this))
     },
 
 
 
-<span id='global-method-getCurrentWindow'>    /**
+<span id='core-Browser-method-getCurrentWindow'>    /**
 </span>     * Always fresh data.
      */
     getCurrentWindow: function(){
@@ -175,7 +171,7 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
 
 
-<span id='global-method-switchToWindowByTitle'>    /**
+<span id='core-Browser-method-switchToWindowByTitle'>    /**
 </span>     * If the window is not yet completely loaded you might not
      * have a valid window title. You should wait for the window
      * to load before using this.
@@ -204,6 +200,19 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
 
 
+    getWindowByUrl: function(url){
+        this.update();
+        var i = this.__windows.length;
+        while(i--){
+            if(this.__windows[i].getUrl() === url){
+                return this.__windows[i];
+            }
+        }
+        return false;
+    },
+
+
+
     switchToWindow: function(w){
         return this.__driver.switchTo().f_window(w.getId()).wait();
     },
@@ -223,7 +232,23 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
 
 
-<span id='global-method-waitToHaveAtLeastXWindows'>    /**
+<span id='core-Browser-method-openANewWindow'>    /**
+</span>     * Might not work correctly if opens a page that will redirect to another
+     * url.
+     */
+    openANewWindow: function(url){
+        // Method from: http://stackoverflow.com/questions/17547473/how-to-open-a-new-tab-using-selenium-webdriver
+        var w = this.getCurrentWindow();
+        var windowName = 'openedWindow_' + this.__openedWindowsId;
+        this.__openedWindowsId++;
+        w.executeScript(&quot;window.open('&quot;+url+&quot;','_blank');&quot;);
+        this.waitForWindowWithUrlToOpen(url);
+        return this.getWindowByUrl(url);
+    },
+
+
+
+<span id='core-Browser-method-waitToHaveAtLeastXWindows'>    /**
 </span>     * Waits until the browser has at least X windows.
      * @param {Number} x Number of windows.
      */
@@ -235,7 +260,10 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
 
 
-
+<span id='core-Browser-method-waitWindowToBeClosed'>    /**
+</span>     * Waits until the window you provided is closed.
+     * @param  {Window} w [description]
+     */
     waitWindowToBeClosed: function(w){
         this.wait(function(){
             return w.isClosed();
@@ -244,7 +272,10 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
 
 
-
+<span id='core-Browser-method-waitForWindowWithTitleToOpen'>    /**
+</span>     * Waits until a window with the title specified opens.
+     * @param  {String} title
+     */
     waitForWindowWithTitleToOpen: function(title){
         this.wait(function(){
             return !!this.getWindowByTitle(title);
@@ -253,11 +284,27 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
 
 
+<span id='core-Browser-method-waitForWindowWithUrlToOpen'>    /**
+</span>     * Waits until a window with the url specified opens.
+     * @param  {String} url
+     */
+    waitForWindowWithUrlToOpen: function(url){
+        this.wait(function(){
+            return !!this.getWindowByUrl(url);
+        }.bind(this))
+    },
+
+
+
+<span id='core-Browser-method-wait'>    /**
+</span>     * Check the {@link utils#wait} docs.
+     * @method
+     */
     wait: utils.wait,
 
 
 
-<span id='global-method-sleep'>    /**
+<span id='core-Browser-method-sleep'>    /**
 </span>     * Sleeps for x seconds.
      */
     sleep: function(ms){
@@ -266,7 +313,7 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
 
 
-<span id='global-method-quit'>    /**
+<span id='core-Browser-method-quit'>    /**
 </span>     * Closes the browser.
      */
     quit: function(){
@@ -276,8 +323,9 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
 
 
-<span id='global-method-__setCurrentWindow'>    /**
+<span id='core-Browser-method-__setCurrentWindow'>    /**
 </span>     * Internal method, don't use externally.
+     * @private
      */
     __setCurrentWindow: function(w){
         if(this.__currentWindow === w) return;
@@ -286,8 +334,9 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
 
 
-<span id='global-method-__addWindow'>    /**
+<span id='core-Browser-method-__addWindow'>    /**
 </span>     * Internal method, don't use externally.
+     * @private
      */
     __addWindow: function(w){
         this.__windows.push(w);
@@ -296,6 +345,9 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
 
 
+<span id='core-Browser-method-__closeWindow'>    /**
+</span>     * @private
+     */
     __closeWindow: function(w){
         this.__windows = _.without(this.__windows, w);
         w.setClosed(true);

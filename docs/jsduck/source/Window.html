@@ -24,8 +24,10 @@ var Element = require('./Element');
 
 
 
-<span id='Window'>/**
-</span> * Almost every method makes use of ´this.__browser.switchToWindow(this);`
+<span id='core-Window'>/**
+</span> * @class core.Window
+ *
+ * Almost every method makes use of ´this.__browser.switchToWindow(this);`
  * because we need to ensure that the commands are sent to the correct
  * window and not some other window the driver has selected.
  */
@@ -46,30 +48,97 @@ var Window = function(options){
 
 
 
+<span id='core-Window-property-'>/**
+</span> * Scripts that will be ran on the client side.
+ */
+Window.scripts = {
+
+
+
+    setup: function(){
+        if(typeof window.test === 'undefined'){
+            window.test = {};
+        }
+        if(!window.test.runFunctionWithJSONArgs){
+            window.test.runFunctionWithJSONArgs = function(fn, data){
+                fn.call(window, JSON.parse(data));
+            }
+        }
+
+
+        return true;
+    },
+
+
+
+    // loadScript: function(){
+    //     // From: http://sqa.stackexchange.com/questions/2921/webdriver-can-i-inject-a-jquery-script-for-a-page-that-isnt-using-jquery
+    // },
+
+
+
+    scrollTo: function(cssSelector){
+        var target = document.querySelector(cssSelector);
+        if(!target) return alert('not found');
+        $(window).scrollTop(target.getBoundingClientRect().top);
+        return true;
+    }
+
+
+
+}
+
+
+
+
+
 _.extend(Window.prototype, {
 
 
 
+<span id='core-Window-method-update'>    /**
+</span>     * Update, not yet used. Called automatically by the browser.
+     */
+    update: function(){
+
+    },
+
+
+
+<span id='core-Window-method-getId'>    /**
+</span>     * Returns the id of the window. This is the id provided by the
+     * selenium webdriver.
+     * @return {String} Id of this window.
+     */
     getId: function(){
         return this.__id;
     },
 
 
 
+<span id='core-Window-method-setClosed'>    /**
+</span>     * Defines that this window is now closed.
+     * Should not be called.
+     */
     setClosed: function(value){
         this.__closed = value;
     },
 
 
 
+<span id='core-Window-method-isClosed'>    /**
+</span>     * Queries whenever this window is closed or not.
+     * @return {Boolean} True if the window is closed. False if is still open.
+     */
     isClosed: function(){
         return this.__closed;
     },
 
 
 
-<span id='Window-method-goTo'>    /**
+<span id='core-Window-method-goTo'>    /**
 </span>     * Goes to a certain url. When ends the page should be loaded already.
+     * @param {String} url
      */
     goTo: function(url){
         this.focus();
@@ -78,8 +147,9 @@ _.extend(Window.prototype, {
 
 
 
-<span id='Window-method-getTitle'>    /**
-</span>     * Will switch to this window and go back to the driver's window.
+<span id='core-Window-method-getTitle'>    /**
+</span>     * Returns the title of the window.
+     * @return {String} Title of the window.
      */
     getTitle: function(){
         this.focus();
@@ -88,8 +158,23 @@ _.extend(Window.prototype, {
 
 
 
-<span id='Window-method-click'>    /**
-</span>     * Returns false if not clicked.
+<span id='core-Window-method-getUrl'>    /**
+</span>     * Returns the url of the window.
+     * @return {String} Url of the window.
+     */
+    getUrl: function(){
+        this.focus();
+        return this.__driver.f_getCurrentUrl().wait();
+    },
+
+
+
+
+
+<span id='core-Window-method-click'>    /**
+</span>     * Returns false if the element have not been clicked.
+     * @param {String} cssSelector
+     * @return {Boolean}
      */
     click: function(cssSelector){
         this.focus();
@@ -100,9 +185,20 @@ _.extend(Window.prototype, {
 
 
 
-<span id='Window-method-findEl'>    /**
+<span id='core-Window-method-scrollTo'>    /**
+</span>     * Scrolls into an element defined by the cssSelector.
+     * @param {String} cssSelector
+     */
+    scrollTo: function(cssSelector){
+        this.executeScript(Window.scripts.scrollTo, cssSelector);
+    },
+
+
+
+<span id='core-Window-method-findEl'>    /**
 </span>     * Finds an element in this window. It will automatically wrap the element
      * returned into a Element of our type.
+     * @param {String} cssSelector
      */
     findEl: function(cssSelector){
         this.focus();
@@ -123,7 +219,7 @@ _.extend(Window.prototype, {
 
 
 
-<span id='Window-method-executeScript'>    /**
+<span id='core-Window-method-executeScript'>    /**
 </span>     * Executes a certain script into this window. You can provide the script
      * as function or as a string. If the current window is not selected in the driver
      * then it will select and then run the script.
@@ -138,22 +234,66 @@ _.extend(Window.prototype, {
      * The main benefit is that you are actually sending a function and not a string
      * which allows you to have syntax highlight in the function you are sending to the
      * client side. Is also more readable than the selenium way.
+     *
+     * @param {String|Function} script
+     * @param {*} testArgs
+     * @return {Object} return
+     * @return {*} return.data
+     * @return {String|undefined} return.err
      */
     executeScript: function(script, testArgs){
         this.focus();
+        this.__injectInitScripts();
         if(_.isFunction(script)){
             if(testArgs){
-                var EJSON = require('EJSON');
+                var hasEJSON = this.__hasEJSON();
+                var clientSideFunction = hasEJSON ? 'runFunctionWithEJSONArgs' : 'runFunctionWithJSONArgs';
+                var stringArgs;
+                console.log('hasEJSON', hasEJSON)
+                if(hasEJSON){
+                    var EJSON = require('EJSON');
+                    stringArgs = EJSON.stringify(testArgs);
+                }else{
+                    stringArgs = JSON.stringify(JSON.stringify(testArgs));
+                }
                 var script = [
-                    'return test.runFunctionWithEJSONArgs(',
+                    'return test.'+clientSideFunction+'(',
                         script.toString(), ', ',
-                        '\'', EJSON.stringify(testArgs), '\'',
+                        // The double stringify is needed because we need to pass the
+                        // arguments as string, but that string should be stringified too.
+                        // This enables you to send picky data like `a[href=&quot;xxx&quot;]`.
+                        '', stringArgs, '',
                     ');',
                 ].join('');
-                console.log('&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;', script)
             }else{
                 script = script.toString();
             }
+        }
+        return this.executeRawScript(script);
+    },
+
+
+
+<span id='core-Window-method-executeRawScript'>    /**
+</span>     * Executes a raw script without any helpers. Then returns the
+     * data.
+     *
+     * Important to note that the return value is not the data, is an object
+     * which contains the data and an eventual error.
+     *
+     * Example of an output of this function:
+     *
+     *     {err: 'some error happened'}
+     *
+     * or
+     *
+     *     {data: 5}
+     */
+    executeRawScript: function(script){
+        this.focus();
+        if(_.isFunction(script)){
+            script = script.toString();
+            var script = ['(', script.toString(), ')();'].join('');
         }
         try{
             var data = this.__driver.f_executeScript(script).wait();
@@ -165,15 +305,32 @@ _.extend(Window.prototype, {
 
 
 
+<span id='core-Window-method-waitToLoad'>    /**
+</span>     * Waits until this window has loaded.
+     */
     waitToLoad: function(){
         this.focus();
         this.wait(function(){
-            return this.executeScript('return document.readyState').data === &quot;complete&quot;;
+            return this.isLoaded();
         }.bind(this))
     },
 
 
 
+<span id='core-Window-method-isLoaded'>    /**
+</span>     * Returns true if the page has been loaded.
+     * @return {Boolean} Page is loaded.
+     */
+    isLoaded: function(){
+        return this.executeScript('return document.readyState').data === &quot;complete&quot;;
+    },
+
+
+
+<span id='core-Window-method-waitForElement'>    /**
+</span>     * Waits until at least one element is found.
+     * @param {String} cssSelector
+     */
     waitForElement: function(cssSelector){
         this.focus();
         this.wait(function(){
@@ -189,6 +346,9 @@ _.extend(Window.prototype, {
 
 
 
+<span id='core-Window-method-focus'>    /**
+</span>     * Focus on this window.
+     */
     focus: function(){
         this.__browser.switchToWindow(this);
         return true;
@@ -196,6 +356,9 @@ _.extend(Window.prototype, {
 
 
 
+<span id='core-Window-method-refresh'>    /**
+</span>     * Refreshes this window.
+     */
     refresh: function(){
         this.focus();
         this.__driver.navigate().f_refresh().wait();
@@ -203,6 +366,9 @@ _.extend(Window.prototype, {
 
 
 
+<span id='core-Window-method-back'>    /**
+</span>     * Navigates back once.
+     */
     back: function(){
         this.focus();
         this.__driver.navigate().f_back().wait();
@@ -210,6 +376,9 @@ _.extend(Window.prototype, {
 
 
 
+<span id='core-Window-method-forward'>    /**
+</span>     * Navigates forward.
+     */
     forward: function(){
         this.focus();
         this.__driver.navigate().f_forward().wait();
@@ -217,7 +386,30 @@ _.extend(Window.prototype, {
 
 
 
-    wait: utils.wait
+<span id='core-Window-method-wait'>    /**
+</span>     * Check the {@link utils#wait} docs.
+     * @method
+     */
+    wait: utils.wait,
+
+
+
+<span id='core-Window-method-__injectInitScripts'>    /**
+</span>     * Scripts should be injected before each executeAction because
+     * the page might have been reloaded from the last time the scripts
+     * have been injected and might not be available.
+     * There is no problem if is executed more than once on the same page.
+     * @private
+     */
+    __injectInitScripts: function(){
+        this.executeRawScript(Window.scripts.setup)
+    },
+
+
+
+    __hasEJSON: function(){
+        return this.executeRawScript('return !!test.EJSON;').data;
+    }
 
 
 

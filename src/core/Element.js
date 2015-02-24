@@ -7,7 +7,7 @@ var SeleniumKeys = require('selenium-webdriver').Key;
 
 
 /**
- * Element
+ * @class core.Element
  */
 var Element = function(options){
     options = _.extend({
