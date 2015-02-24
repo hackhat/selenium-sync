@@ -75,7 +75,6 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
                 browser : this,
             });
             this.__addWindow(w)
-            console.log('added window ' + w.getId());
         }.bind(this))
 
         // Closes windows.
