@@ -330,7 +330,7 @@ _.extend(Browser.prototype, EventEmitter.prototype, {
 
 
 
-    wait: wait,
+    wait: utils.wait,
 
 
 
@@ -580,7 +580,7 @@ _.extend(Window.prototype, {
 
 
 
-    wait: wait
+    wait: utils.wait
 
 
 
