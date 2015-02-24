@@ -18,6 +18,7 @@
   "author": "hackhat",
   "license": "ISC",
   "dependencies": {
+    "ejson": "^2.0.1",
     "fibers": "^1.0.5",
     "lodash": "^3.3.0",
     "selenium-webdriver": "^2.44.0"
