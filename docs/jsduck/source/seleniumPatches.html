@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">var utils         = require('./utils');
+var TargetLocator = require('selenium-webdriver').WebDriver.TargetLocator;
+var Navigation    = require('selenium-webdriver').WebDriver.Navigation;
+var WebElement    = require('selenium-webdriver').WebElement;
+
+
+
+
+
+var seleniumPatches = function(){
+
+
+
+    var isPrototype = true;
+    utils.wrapMethods(TargetLocator.prototype, [
+        'window'
+    ], isPrototype);
+
+
+
+    var isPrototype = true;
+    utils.wrapMethods(WebElement.prototype, [
+        'getOuterHtml' ,
+        'click'        ,
+        'sendKeys'     ,
+    ], isPrototype);
+
+
+
+    var isPrototype = true;
+    utils.wrapMethods(Navigation.prototype, [
+        'back'    ,
+        'forward' ,
+        'refresh' ,
+        'to'      ,
+    ], isPrototype);
+
+
+
+}
+
+
+
+
+
+module.exports = seleniumPatches;
+</pre>
+</body>
+</html>

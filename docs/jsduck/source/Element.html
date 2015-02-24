@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">var _     = require('lodash');
+var utils = require('../utils');
+
+
+
+
+
+var Element = function(options){
+    options = _.extend({
+        rawEl   : void 0,
+        driver  : void 0,
+        browser : void 0,
+    }, options);
+    this.__rawEl   = options.rawEl;
+    this.__driver  = options.driver;
+    this.__browser = options.browser;
+}
+
+
+
+
+
+_.extend(Element.prototype, {
+
+
+});
+// Create sync aliases automatically for the methods requested.
+// Will be added o the Element.prototype;
+[
+    'click',
+    'sendKeys',
+].forEach(function(methodName){
+    Element.prototype[methodName] = function(){
+        return this.__rawEl['f_' + methodName].apply(this.__rawEl, arguments).wait();
+    }
+})
+
+
+
+
+module.exports = Element;
+</pre>
+</body>
+</html>

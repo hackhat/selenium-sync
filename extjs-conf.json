@@ -1,0 +1,5 @@
+{
+    "--": ["./src"],
+    "--output": "./docs/jsduck"
+    // "--guides": "./docs/guides/guides.json"
+}
