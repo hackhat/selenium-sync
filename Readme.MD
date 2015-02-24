@@ -50,7 +50,7 @@ There are 3 different ways of using selenium and here are explained:
  - Then create a file [`test.js`](./examples/readme/test.js) with those contents:
 
 
-
+        ```javascript
         var Future  = require('fibers/future');
         var Browser = require('../../src/index').Browser;
 
@@ -82,7 +82,7 @@ There are 3 different ways of using selenium and here are explained:
 
             browser.sleep(200000);
         }).detach();
-
+        ```
 
 
  - Then run it with `node test.js`;
@@ -102,7 +102,9 @@ There are 3 different ways of using selenium and here are explained:
 In order to make EJSON work you need to require it and provide it on the client side
 on the test global variable like this:
 
+    ```javascript
     window.test = {EJSON: require('EJSON')};
+    ```
 
 This is needed to transmit data properly from test to the client browser. If no EJSON is provided it will fall back on JSON.
 
