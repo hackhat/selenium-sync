@@ -1,46 +1,12 @@
-var _             = require('lodash');
-var Future        = require('fibers/future');
-var ChromeDriver  = require('selenium-webdriver/chrome').Driver;
-var EventEmitter  = require('events').EventEmitter;
-var until         = require('selenium-webdriver').until;
-var TargetLocator = require('selenium-webdriver').WebDriver.TargetLocator;
-var Navigation    = require('selenium-webdriver').WebDriver.Navigation;
-var WebElement    = require('selenium-webdriver').WebElement;
-var utils         = require('../utils');
-var Window        = require('./Window');
+var _               = require('lodash');
+var Future          = require('fibers/future');
+var ChromeDriver    = require('selenium-webdriver/chrome').Driver;
+var EventEmitter    = require('events').EventEmitter;
+var until           = require('selenium-webdriver').until;
+var utils           = require('../utils');
+var seleniumPatches = require('../seleniumPatches');
+var Window          = require('./Window');
 
-
-
-
-
-
-
-
-var isPrototype = true;
-utils.wrapMethods(TargetLocator.prototype, [
-    'window'
-], isPrototype);
-
-
-
-
-var isPrototype = true;
-utils.wrapMethods(WebElement.prototype, [
-    'getOuterHtml' ,
-    'click'        ,
-    'sendKeys'     ,
-], isPrototype);
-
-
-
-
-var isPrototype = true;
-utils.wrapMethods(Navigation.prototype, [
-    'back'    ,
-    'forward' ,
-    'refresh' ,
-    'to'      ,
-], isPrototype);
 
 
 
@@ -109,7 +75,12 @@ utils.wrapMethods(Navigation.prototype, [
  *  - You need fibers;
  *  - Is not yet complete;
  */
+var seleniumPatchesApplied = false;
 var Browser = function(options){
+    if(!seleniumPatchesApplied){
+        seleniumPatches();
+        seleniumPatchesApplied = true;
+    }
     options = _.extend({
         driverType : 'chrome',
         driver     : void 0
