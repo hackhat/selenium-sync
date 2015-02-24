@@ -1,0 +1,20 @@
+{
+  "name": "selenium-sync",
+  "version": "0.0.1",
+  "description": "An intuitive and clean (sync) selenium implementation and non blocking.",
+  "main": "src/Browser.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "selenium",
+    "sync",
+    "browser",
+    "test",
+    "block",
+    "clean",
+    "intuitive"
+  ],
+  "author": "hackhat",
+  "license": "ISC"
+}
