@@ -20,7 +20,8 @@ Future.task(function(){
     // Gihub search
     var githubW = browser.openANewWindow('https://github.com/');
     var searchBox2 = githubW.findEl('.js-site-search-form > input');
-    searchBox2.type('selenium-sync');
+    searchBox2.type('selenium-sync', 'ENTER');
+    githubW.click('a[href="/hackhat/selenium-sync"]');
 
 
     console.log('done!')

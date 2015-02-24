@@ -1,5 +1,6 @@
-var _     = require('lodash');
-var utils = require('../utils');
+var _            = require('lodash');
+var utils        = require('../utils');
+var SeleniumKeys = require('selenium-webdriver').Key;
 
 
 
@@ -19,14 +20,32 @@ var Element = function(options){
 
 
 
+Element.Keys = SeleniumKeys;
+
+
+
+
 
 _.extend(Element.prototype, {
 
 
 
+    /**
+     * Send keys to the element. If you want to send special keys like enter you should do like this
+     *
+     *     el.type('my keyword', 'ENTER');
+     */
     type: function(keys){
-        this.sendKeys.apply(this, arguments);
-    }
+        var args = Array.prototype.slice.call(arguments);
+        args.forEach(function(stringKeyArg, i){
+            _.forEach(Element.Keys, function(seleniumKey, stringKey){
+                if(stringKeyArg === stringKey){
+                    args[i] = seleniumKey;
+                }
+            })
+        })
+        this.sendKeys.apply(this, args);
+    },
 
 
 
