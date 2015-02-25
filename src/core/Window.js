@@ -53,11 +53,20 @@ Window.scripts = {
         if(typeof window.test === 'undefined'){
             window.test = {};
         }
-        if(!window.test.runFunctionWithJSONArgs){
-            window.test.runFunctionWithJSONArgs = function(fn, data){
-                fn.call(window, JSON.parse(data));
+        var test = window.test;
+        if(!test.runFunctionWithJSONArgs){
+            test.runFunctionWithJSONArgs = function(fn, data){
+                var res = fn(JSON.parse(data));
+                return res;
             }
         }
+        if(!test.runFunctionWithEJSONArgs){
+            test.runFunctionWithEJSONArgs = function(fn, data){
+                var res = fn(test.EJSON.parse(data));
+                return res;
+            }
+        }
+
 
 
         return true;
@@ -243,29 +252,25 @@ _.extend(Window.prototype, {
     executeScript: function(script, testArgs){
         this.focus();
         this.__injectInitScripts();
-        if(_.isFunction(script)){
-            if(testArgs){
-                var hasEJSON = this.__hasEJSON();
-                var clientSideFunction = hasEJSON ? 'runFunctionWithEJSONArgs' : 'runFunctionWithJSONArgs';
-                var stringArgs;
-                if(hasEJSON){
-                    var EJSON = require('EJSON');
-                    stringArgs = EJSON.stringify(testArgs);
-                }else{
-                    stringArgs = JSON.stringify(JSON.stringify(testArgs));
-                }
-                var script = [
-                    'return test.'+clientSideFunction+'(',
-                        script.toString(), ', ',
-                        // The double stringify is needed because we need to pass the
-                        // arguments as string, but that string should be stringified too.
-                        // This enables you to send picky data like `a[href="xxx"]`.
-                        '', stringArgs, '',
-                    ');',
-                ].join('');
+        if(testArgs){
+            var hasEJSON = this.__hasEJSON();
+            var clientSideFunction = hasEJSON ? 'runFunctionWithEJSONArgs' : 'runFunctionWithJSONArgs';
+            var stringArgs;
+            // The double stringify is needed because we need to pass the
+            // arguments as string, but that string should be stringified too.
+            // This enables you to send picky data like `a[href="xxx"]`.
+            if(hasEJSON){
+                var EJSON = require('EJSON');
+                stringArgs = EJSON.stringify(EJSON.stringify(testArgs));
             }else{
-                script = script.toString();
+                stringArgs = JSON.stringify(JSON.stringify(testArgs));
             }
+            var script = [
+                'return test.'+clientSideFunction+'(',
+                    script.toString(), ', ',
+                    '', stringArgs, '',
+                ');',
+            ].join('');
         }
         return this.executeRawScript(script);
     },
@@ -291,7 +296,7 @@ _.extend(Window.prototype, {
         this.focus();
         if(_.isFunction(script)){
             script = script.toString();
-            var script = ['(', script.toString(), ')();'].join('');
+            var script = ['return (', script.toString(), ')();'].join('');
         }
         try{
             var data = this.__driver.f_executeScript(script).wait();
