@@ -1,6 +1,6 @@
 {
   "name": "selenium-sync",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "An intuitive, clean and sync selenium-js implementation (also non blocking)",
   "main": "src/index.js",
   "scripts": {
