@@ -170,7 +170,7 @@ This is needed to transmit data properly from test to the client browser. If no 
  - [Java docs](http://selenium.googlecode.com/git/docs/api/java/org/openqa/selenium/package-summary.html);
  - [Until](http://selenium.googlecode.com/git/docs/api/javascript/source/lib/webdriver/until.js.src.html);
  - [Python](http://selenium-python.readthedocs.org/api.html#selenium.webdriver.remote.webdriver.WebDriver.current_window_handle);
-
+ - [ChromeDriver - WebDriver for Chrome](https://sites.google.com/a/chromium.org/chromedriver/);
 
 
 ### The bad part
