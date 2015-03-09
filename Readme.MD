@@ -13,7 +13,7 @@ scriptic names like `getWindowHandles`.
 
 ## API
 
-Check the **[full API here](https://rawgit.com/hackhat/selenium-sync/v0.0.3/docs/jsduck/index.html)**.
+Check the **[full API here](https://rawgit.com/hackhat/selenium-sync/v0.0.4/docs/jsduck/index.html)**.
 
 ## Why this?
 
@@ -29,7 +29,7 @@ a beautiful and intuitive API.
  - Browser/window/element concepts (easy to understand where you are apply a certain change);
  - Easy multi window management;
  - Easy css selector out of the box;
- - Very friendly [API](https://rawgit.com/hackhat/selenium-sync/v0.0.3/docs/jsduck/index.html) docs with types; 
+ - Very friendly [API](https://rawgit.com/hackhat/selenium-sync/v0.0.4/docs/jsduck/index.html) docs with types; 
  - Uses the [selenium for JavaScript](http://selenium.googlecode.com/git/docs/api/javascript/index.html);
 
 
